@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import React from "react";
@@ -23,9 +23,10 @@ const NavBar = () => {
           {links.map((link) => (
             <Link
               className={classNames({
-                'text-zinc-900 border-b-2 border-sky-700': currentPath === link.href,
-                'text-zinc-500': currentPath !== link.href,
-                'hover:text-zinc-900 transition-colors text-lg': true
+                "text-zinc-900 border-b-2 border-sky-700":
+                  currentPath === link.href,
+                "text-zinc-500": currentPath !== link.href,
+                "hover:text-zinc-900 transition-colors text-lg": true,
               })}
               key={link.href}
               href={link.href}
