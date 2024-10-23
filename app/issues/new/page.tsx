@@ -13,6 +13,8 @@ import { HiOutlineInformationCircle } from "react-icons/hi2";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { issueSchema } from "@/app/validationSchema";
 import { z } from "zod";
+import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
 
 type IssueForm = z.infer<typeof issueSchema>;
 
@@ -27,6 +29,7 @@ const NewIssuePage = () => {
     resolver: zodResolver(issueSchema),
   });
   const [error, setError] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
   return (
     <div className="max-w-xl space-y-3">
       {error && (
@@ -41,19 +44,19 @@ const NewIssuePage = () => {
         className="space-y-3"
         onSubmit={handleSubmit(async (data) => {
           try {
+            setIsSubmitted(true);
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error) {
+            setIsSubmitted(false);
             setError("An unexpected error occured");
           }
         })}
       >
         <TextField.Root placeholder="Title..." {...register("title")} />
-        {errors.title && (
-          <Text color="red" as="p">
-            Title is required
-          </Text>
-        )}
+        <ErrorMessage>
+          {errors.title?.message && <>Title is required</>}
+        </ErrorMessage>
         <Controller
           name="description"
           control={control}
@@ -61,12 +64,12 @@ const NewIssuePage = () => {
             <SimpleMDE placeholder="Description..." {...field} />
           )}
         />
-        {errors.description && (
-          <Text color="red" as="p">
-            Description is required
-          </Text>
-        )}
-        <Button className="!cursor-pointer">Submit New Issue</Button>
+        <ErrorMessage>
+          {errors.description?.message && <>Description is required</>}
+        </ErrorMessage>
+        <Button className="!cursor-pointer" disabled={isSubmitted}>
+          Submit New Issue {isSubmitted && <Spinner />}
+        </Button>
       </form>
     </div>
   );
